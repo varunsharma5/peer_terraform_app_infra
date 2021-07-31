@@ -1,4 +1,10 @@
-
+parameters:
+  - name: tf_operation
+    displayName: "Terraform Operation"
+    default: 'destroy'
+    values:
+      - 'destroy --auto-approve'
+      - 'apply'
 trigger: 
   - main
 
@@ -28,3 +34,14 @@ jobs:
   - script: 
       terraform init
     displayName: "terraform init"
+  - script: 
+      terraform validate
+    displayName: "terraform validate"
+  - script: 
+    condition: and(succeeded(), eq(parameters.tf_operation), 'apply'))
+      terraform apply --auto-approve
+    displayName: "terraform apply"
+  - script: 
+    condition: and(succeeded(), eq(parameters.tf_operation), 'destroy'))
+      terraform destroy --auto-approve
+    displayName: "terraform destroy"   
