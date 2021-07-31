@@ -15,3 +15,15 @@ jobs:
   - script: 
       terraform -v
     displayName: "Verify terraform installation"
+  - task: DownloadSecureFile@1
+    name: aws_credentials_file
+    displayName: 'Download AWS credentils file'
+    inputs:
+      secureFile: 'credentials'
+  - script: |
+      mkdir ~/.aws
+      cp $(aws_credentials_file.secureFilePath) ~/.aws
+    displayName: "Configuring AWS"
+  - script: 
+      terraform init
+    displayName: "terraform init"
