@@ -20,3 +20,12 @@ jobs:
     vmImage: ${{ parameters.image }}
   steps:
   - script: echo building $(Build.BuildNumber) with ${{ parameters.image }}
+    displayName: "Print Build info"
+  - script: |
+      curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
+      sudo apt-add-repository "deb [arch=$(dpkg --print-architecture)] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+      sudo apt install terraform
+    displayName: "Installing terraform"
+  - script: 
+      terraform -v
+    displayName: "Verify terraform installation"
