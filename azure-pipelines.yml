@@ -37,11 +37,9 @@ jobs:
   - script: 
       terraform validate
     displayName: "terraform validate"
-  - script: 
+  - script: terraform apply --auto-approve
     condition: and(succeeded(), eq(parameters.tf_operation, 'apply'))
-      terraform apply --auto-approve
     displayName: "terraform apply"
-  - script: 
+  - script: terraform destroy --auto-approve
     condition: and(succeeded(), eq(parameters.tf_operation, 'destroy'))
-      terraform destroy --auto-approve
     displayName: "terraform destroy"   
