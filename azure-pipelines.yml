@@ -1,10 +1,10 @@
 parameters:
   - name: tf_operation
     displayName: "Terraform Operation"
-    default: 'destroy'
+    default: destroy
     values:
-      - 'destroy --auto-approve'
-      - 'apply'
+      - destroy
+      - apply
 trigger: 
   - main
 
