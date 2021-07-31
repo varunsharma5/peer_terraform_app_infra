@@ -38,8 +38,8 @@ jobs:
       terraform validate
     displayName: "terraform validate"
   - script: terraform apply --auto-approve
-    condition: and(succeeded(), eq(${{ parameters.tf_operation }}, 'apply'))
+    condition: and(succeeded(), eq('${{ parameters.tf_operation }}', 'apply'))
     displayName: "terraform apply"
   - script: terraform destroy --auto-approve
-    condition: and(succeeded(), eq(${{ parameters.tf_operation }}, 'destroy'))
+    condition: and(succeeded(), eq('${{ parameters.tf_operation }}', 'destroy'))
     displayName: "terraform destroy"   
