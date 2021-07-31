@@ -1,7 +1,7 @@
 parameters:
   - name: tf_operation
     displayName: "Terraform Operation"
-    default: destroy
+    default: apply
     values:
       - destroy
       - apply
