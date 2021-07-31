@@ -11,7 +11,9 @@ parameters:
   - macOS-latest
   - macOS-10.14
 
-trigger: none
+trigger: 
+  - main
+
 
 jobs:
 - job: build
