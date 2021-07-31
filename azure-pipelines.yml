@@ -19,23 +19,27 @@ jobs:
       sudo apt-add-repository "deb [arch=$(dpkg --print-architecture)] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
       sudo apt install terraform
     displayName: "Installing terraform"
-  - script: 
-      terraform -v
+  - script: terraform -v
     displayName: "Verify terraform installation"
   - task: DownloadSecureFile@1
     name: aws_credentials_file
     displayName: 'Download AWS credentils file'
     inputs:
       secureFile: 'credentials'
+  - task: DownloadSecureFile@1
+    name: pem_file
+    displayName: 'Download pem file'
+    inputs:
+      secureFile: 'varun-chef-key'
+  - script: cp $(pem_file.secureFilePath) ~/.
+    displayName: "Copying server pem key to home dir"
   - script: |
       mkdir ~/.aws
       cp $(aws_credentials_file.secureFilePath) ~/.aws
     displayName: "Configuring AWS"
-  - script: 
-      terraform init
+  - script: terraform init
     displayName: "terraform init"
-  - script: 
-      terraform validate
+  - script: terraform validate
     displayName: "terraform validate"
   - script: terraform apply --auto-approve
     condition: and(succeeded(), eq('${{ parameters.tf_operation }}', 'apply'))
