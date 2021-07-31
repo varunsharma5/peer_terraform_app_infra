@@ -1,28 +1,13 @@
-parameters:
-- name: image
-  displayName: Pool Image
-  type: string
-  default: ubuntu-latest
-  values:
-  - windows-latest
-  - vs2017-win2016
-  - ubuntu-latest
-  - ubuntu-16.04
-  - macOS-latest
-  - macOS-10.14
-
 trigger: 
   - main
-
 
 jobs:
 - job: build
   displayName: build
   pool: 
-    vmImage: ${{ parameters.image }}
+    vmImage: ubuntu-latest
   steps:
-  - script: echo building $(Build.BuildNumber) with ${{ parameters.image }}
-    displayName: "Print Build info"
+
   - script: |
       curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
       sudo apt-add-repository "deb [arch=$(dpkg --print-architecture)] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
