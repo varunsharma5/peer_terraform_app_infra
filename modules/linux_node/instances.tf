@@ -8,7 +8,7 @@ resource "aws_instance" "my_vm" {
   tags = var.tags
 
   provisioner "local-exec" {
-    command = "sleep 90; knife bootstrap ${self.public_ip} -U centos -i /Users/sharmav/pem_keys/varun-chef-key.pem --sudo -N ${self.public_ip} --policy-name ${var.chef_policy_name} --policy-group staging -c /Users/sharmav/.chef/config.rb --ssh-verify-host-key=never"
+    command = "sleep 90; knife bootstrap ${self.public_ip} -U centos -i ~/varun-chef-key.pem --sudo -N ${self.public_ip} --policy-name ${var.chef_policy_name} --policy-group staging -c ~/.chef/config.rb --ssh-verify-host-key=never"
   }
 
   provisioner "remote-exec" {
@@ -17,7 +17,7 @@ resource "aws_instance" "my_vm" {
       type = "ssh"
       user = "centos"
       agent = false
-      private_key = file("/Users/sharmav/pem_keys/varun-chef-key.pem")
+      private_key = file("~/varun-chef-key.pem")
     }
     inline = [
       "sudo chef-client -l info"
@@ -26,13 +26,13 @@ resource "aws_instance" "my_vm" {
 
  provisioner "local-exec" {
   when = "destroy"
-  command = "knife node delete -y ${self.public_ip} -c /Users/sharmav/.chef/config.rb"
+  command = "knife node delete -y ${self.public_ip} -c ~/.chef/config.rb"
   on_failure = continue
  }
 
  provisioner "local-exec" {
   when = "destroy"
-  command = "knife client delete -y ${self.public_ip} -c /Users/sharmav/.chef/config.rb"
+  command = "knife client delete -y ${self.public_ip} -c ~/.chef/config.rb"
   on_failure = continue
  }
 }

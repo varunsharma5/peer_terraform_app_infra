@@ -2,9 +2,6 @@ variable "region" {
   default = "ap-south-1"
 }
 
-variable "profile" {
-  default = "student.201"
-}
 variable "instance_count_webserver" {
   default = "1"
 }
