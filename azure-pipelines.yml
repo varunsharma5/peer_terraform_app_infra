@@ -45,17 +45,15 @@ jobs:
   # - script: terraform -v
   #   displayName: "Verify terraform installation"
   
-  # # Installing chef workstation
-  # - task: chef-software.chef-azdo.install.component@3
-  #   inputs:
-  #     component: 'chef-workstation'
-  #     sudo: true
-  #     version: '21.7.524'
-  #   displayName: 'Install chef workstation'
-  # - script: chef -v
-  #   displayName: 'Verify chef workstation installation'
-
- 
+  # Installing chef workstation
+  - task: chef-software.chef-azdo.install.component@3
+    inputs:
+      component: 'chef-workstation'
+      sudo: true
+      version: '21.7.524'
+    displayName: 'Install chef workstation'
+  - script: chef -v
+    displayName: 'Verify chef workstation installation'
 
   - script: cp $(node_pem_file.secureFilePath) ~/.
     displayName: "Copy node pem key to home dir"
