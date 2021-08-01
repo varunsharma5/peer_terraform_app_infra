@@ -21,7 +21,7 @@ jobs:
     inputs:
       secureFile: 'credentials'
   - task: DownloadSecureFile@1
-    name: pem_file
+    name: node_pem_file
     displayName: 'Download nodes pem file'
     inputs:
       secureFile: 'varun-chef-key.pem'
@@ -41,7 +41,7 @@ jobs:
   #     curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
   #     sudo apt-add-repository "deb [arch=$(dpkg --print-architecture)] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
   #     sudo apt install terraform
-  #   displayName: "Installing terraform"
+  #   displayName: "Install terraform"
   # - script: terraform -v
   #   displayName: "Verify terraform installation"
   
@@ -51,14 +51,14 @@ jobs:
   #     component: 'chef-workstation'
   #     sudo: true
   #     version: '21.7.524'
-  #   displayName: 'Installing chef workstation'
+  #   displayName: 'Install chef workstation'
   # - script: chef -v
   #   displayName: 'Verify chef workstation installation'
 
  
 
-  - script: cp $(pem_file.secureFilePath) ~/.
-    displayName: "Copying server pem key to home dir"
+  - script: cp $(node_pem_file.secureFilePath) ~/.
+    displayName: "Copy node pem key to home dir"
   - script: |
       mkdir ~/.chef
       cp $(config_rb_file.secureFilePath) ~/.chef/.
@@ -68,7 +68,7 @@ jobs:
   - script: |
       mkdir ~/.aws
       cp $(aws_credentials_file.secureFilePath) ~/.aws
-    displayName: "Configuring AWS"
+    displayName: "Configure AWS"
   # - script: terraform init
   #   displayName: "terraform init"
   # - script: terraform validate
@@ -79,5 +79,5 @@ jobs:
   # - script: terraform destroy --auto-approve
   #   condition: and(succeeded(), eq('${{ parameters.tf_operation }}', 'destroy'))
   #   displayName: "terraform destroy"
-  # - script: knife node list
-  #   displayName: "Verify chef configuration"
+  - script: knife node list
+    displayName: "Verify chef configuration"
