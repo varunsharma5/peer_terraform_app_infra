@@ -65,10 +65,14 @@ jobs:
       knife ssl fetch
       knife ssl check
     displayName: 'Configure chef workstation'
+  - script: knife node list
+    displayName: "Verify chef configuration"
+
   - script: |
       mkdir ~/.aws
       cp $(aws_credentials_file.secureFilePath) ~/.aws
     displayName: "Configure AWS"
+
   - script: terraform init
     displayName: "terraform init"
   - script: terraform validate
@@ -79,5 +83,3 @@ jobs:
   - script: terraform destroy --auto-approve
     condition: and(succeeded(), eq('${{ parameters.tf_operation }}', 'destroy'))
     displayName: "terraform destroy"
-  - script: knife node list
-    displayName: "Verify chef configuration"
