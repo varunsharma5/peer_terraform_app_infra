@@ -24,17 +24,17 @@ jobs:
     name: pem_file
     displayName: 'Download nodes pem file'
     inputs:
-      secureFile: 'varun-chef-key'
+      secureFile: 'varun-chef-key.pem'
   - task: DownloadSecureFile@1
     name: config_rb_file
     displayName: 'Download confid.rb file'
     inputs:
-      secureFile: 'config_rb'
+      secureFile: 'config.rb'
   - task: DownloadSecureFile@1
     name: chef_server_pem_file
     displayName: 'Download chef server key file'
     inputs:
-      secureFile: 'chefserver_key'
+      secureFile: 'varun.pem'
 
   # # Installing Terraform
   # - script: |
