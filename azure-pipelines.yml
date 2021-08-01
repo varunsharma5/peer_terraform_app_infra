@@ -62,6 +62,8 @@ jobs:
       cp $(config_rb_file.secureFilePath) ~/.chef/.
       cp $(chef_server_pem_file.secureFilePath) ~/.chef/.
       ls -l ~/.chef/
+      knife ssl fetch
+      knife ssl check
     displayName: 'Configure chef workstation'
   - script: |
       mkdir ~/.aws
