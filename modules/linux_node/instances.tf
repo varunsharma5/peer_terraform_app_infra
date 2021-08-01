@@ -26,13 +26,13 @@ resource "aws_instance" "my_vm" {
 
  provisioner "local-exec" {
   when = "destroy"
-  command = "knife node delete -y ${self.public_ip} -c ~/.chef/config.rb --chef-license accept"
+  command = "knife node delete -y ${self.public_ip} -c ~/.chef/config.rb"
   on_failure = continue
  }
 
  provisioner "local-exec" {
   when = "destroy"
-  command = "knife client delete -y ${self.public_ip} -c ~/.chef/config.rb --chef-license accept"
+  command = "knife client delete -y ${self.public_ip} -c ~/.chef/config.rb"
   on_failure = continue
  }
 }
