@@ -61,7 +61,7 @@ jobs:
     displayName: "Copying server pem key to home dir"
   - script: |
       mkdir ~/.chef
-      cp $(config_rb.secureFilePath) ~/.chef/.
+      cp $(config_rb_file.secureFilePath) ~/.chef/.
       cp $(chef_server_pem_file.secureFilePath) ~/.chef/.
       ls -l ~/.chef/
     displayName: 'Configure chef workstation'
