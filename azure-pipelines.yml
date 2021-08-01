@@ -68,8 +68,8 @@ jobs:
     displayName: "Configuring AWS"
   - script: terraform init
     displayName: "terraform init"
-  - script: terraform validate
-    displayName: "terraform validate"
+  # - script: terraform validate
+  #   displayName: "terraform validate"
   # - script: terraform apply --auto-approve
   #   condition: and(succeeded(), eq('${{ parameters.tf_operation }}', 'apply'))
   #   displayName: "terraform apply"
