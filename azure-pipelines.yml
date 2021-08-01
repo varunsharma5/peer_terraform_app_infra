@@ -1,0 +1,83 @@
+parameters:
+  - name: tf_operation
+    displayName: "Terraform Operation"
+    default: apply
+    values:
+      - destroy
+      - apply
+trigger: 
+  - main
+
+jobs:
+- job: 
+  displayName: build
+  pool: 
+    vmImage: ubuntu-latest
+  steps:
+ # Downloading secure file to the agent
+  - task: DownloadSecureFile@1
+    name: aws_credentials_file
+    displayName: 'Download AWS credentils file'
+    inputs:
+      secureFile: 'credentials'
+  - task: DownloadSecureFile@1
+    name: node_pem_file
+    displayName: 'Download nodes pem file'
+    inputs:
+      secureFile: 'varun-chef-key.pem'
+  - task: DownloadSecureFile@1
+    name: config_rb_file
+    displayName: 'Download confid.rb file'
+    inputs:
+      secureFile: 'config.rb'
+  - task: DownloadSecureFile@1
+    name: chef_server_pem_file
+    displayName: 'Download chef server key file'
+    inputs:
+      secureFile: 'varun.pem'
+
+  # # Installing Terraform
+  - script: |
+      curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
+      sudo apt-add-repository "deb [arch=$(dpkg --print-architecture)] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+      sudo apt install terraform
+    displayName: "Install terraform"
+  - script: terraform -v
+    displayName: "Verify terraform installation"
+  
+  # Installing chef workstation
+  - task: chef-software.chef-azdo.install.component@3
+    inputs:
+      component: 'chef-workstation'
+      sudo: true
+      version: '21.7.524'
+    displayName: 'Install chef workstation'
+  - script: chef -v
+    displayName: 'Verify chef workstation installation'
+
+  - script: cp $(node_pem_file.secureFilePath) ~/.
+    displayName: "Copy node pem key to home dir"
+  - script: |
+      mkdir ~/.chef
+      cp $(config_rb_file.secureFilePath) ~/.chef/.
+      cp $(chef_server_pem_file.secureFilePath) ~/.chef/.
+      ls -l ~/.chef/
+      knife ssl fetch
+      knife ssl check
+    displayName: 'Configure chef workstation'
+  - script: |
+      mkdir ~/.aws
+      cp $(aws_credentials_file.secureFilePath) ~/.aws
+    displayName: "Configure AWS"
+  - script: terraform init
+    displayName: "terraform init"
+  - script: terraform validate
+    displayName: "terraform validate"
+  - script: terraform apply --auto-approve
+    condition: and(succeeded(), eq('${{ parameters.tf_operation }}', 'apply'))
+    displayName: "terraform apply"
+  - script: terraform destroy --auto-approve
+    condition: and(succeeded(), eq('${{ parameters.tf_operation }}', 'destroy'))
+    displayName: "terraform destroy"
+  - script: knife node list
+    displayName: "Verify chef configuration"
