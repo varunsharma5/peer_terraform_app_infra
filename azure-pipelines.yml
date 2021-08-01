@@ -37,13 +37,13 @@ jobs:
       secureFile: 'varun.pem'
 
   # # Installing Terraform
-  # - script: |
-  #     curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
-  #     sudo apt-add-repository "deb [arch=$(dpkg --print-architecture)] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
-  #     sudo apt install terraform
-  #   displayName: "Install terraform"
-  # - script: terraform -v
-  #   displayName: "Verify terraform installation"
+  - script: |
+      curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
+      sudo apt-add-repository "deb [arch=$(dpkg --print-architecture)] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+      sudo apt install terraform
+    displayName: "Install terraform"
+  - script: terraform -v
+    displayName: "Verify terraform installation"
   
   # Installing chef workstation
   - task: chef-software.chef-azdo.install.component@3
@@ -69,15 +69,15 @@ jobs:
       mkdir ~/.aws
       cp $(aws_credentials_file.secureFilePath) ~/.aws
     displayName: "Configure AWS"
-  # - script: terraform init
-  #   displayName: "terraform init"
-  # - script: terraform validate
-  #   displayName: "terraform validate"
-  # - script: terraform apply --auto-approve
-  #   condition: and(succeeded(), eq('${{ parameters.tf_operation }}', 'apply'))
-  #   displayName: "terraform apply"
-  # - script: terraform destroy --auto-approve
-  #   condition: and(succeeded(), eq('${{ parameters.tf_operation }}', 'destroy'))
-  #   displayName: "terraform destroy"
+  - script: terraform init
+    displayName: "terraform init"
+  - script: terraform validate
+    displayName: "terraform validate"
+  - script: terraform apply --auto-approve
+    condition: and(succeeded(), eq('${{ parameters.tf_operation }}', 'apply'))
+    displayName: "terraform apply"
+  - script: terraform destroy --auto-approve
+    condition: and(succeeded(), eq('${{ parameters.tf_operation }}', 'destroy'))
+    displayName: "terraform destroy"
   - script: knife node list
     displayName: "Verify chef configuration"
