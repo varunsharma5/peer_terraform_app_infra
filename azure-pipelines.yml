@@ -14,6 +14,7 @@ jobs:
   pool: 
     vmImage: ubuntu-latest
   steps:
+  # Installing Terraform
   - script: |
       curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
       sudo apt-add-repository "deb [arch=$(dpkg --print-architecture)] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
@@ -21,6 +22,18 @@ jobs:
     displayName: "Installing terraform"
   - script: terraform -v
     displayName: "Verify terraform installation"
+  
+  # Installing chef workstation
+  - task: chef-software.chef-azdo.install.component@3
+    inputs:
+      component: 'chef-workstation'
+      sudo: true
+      version: '21.7.524'
+    displayName: 'Installing chef workstation'
+  - script: chef -v
+    displayName: 'Verify chef workstation installation'
+
+  # Downloading secure file to the agent
   - task: DownloadSecureFile@1
     name: aws_credentials_file
     displayName: 'Download AWS credentils file'
@@ -28,11 +41,27 @@ jobs:
       secureFile: 'credentials'
   - task: DownloadSecureFile@1
     name: pem_file
-    displayName: 'Download pem file'
+    displayName: 'Download nodes pem file'
     inputs:
       secureFile: 'varun-chef-key'
+  - task: DownloadSecureFile@1
+    name: config_rb_file
+    displayName: 'Download confid.rb file'
+    inputs:
+      secureFile: 'config_rb'
+  - task: DownloadSecureFile@1
+    name: chef_server_pem_file
+    displayName: 'Download chef server key file'
+    inputs:
+      secureFile: 'chefserver_key'
+
   - script: cp $(pem_file.secureFilePath) ~/.
     displayName: "Copying server pem key to home dir"
+  - script: |
+      mkdir ~/.chef
+      cp $(config_rb.secureFilePath) ~/.chef
+      cp $(chef_server_pem_file.secureFilePath) ~/.chef
+    displayName: 'Configuring chef'
   - script: |
       mkdir ~/.aws
       cp $(aws_credentials_file.secureFilePath) ~/.aws
@@ -41,9 +70,11 @@ jobs:
     displayName: "terraform init"
   - script: terraform validate
     displayName: "terraform validate"
-  - script: terraform apply --auto-approve
-    condition: and(succeeded(), eq('${{ parameters.tf_operation }}', 'apply'))
-    displayName: "terraform apply"
-  - script: terraform destroy --auto-approve
-    condition: and(succeeded(), eq('${{ parameters.tf_operation }}', 'destroy'))
-    displayName: "terraform destroy"   
+  # - script: terraform apply --auto-approve
+  #   condition: and(succeeded(), eq('${{ parameters.tf_operation }}', 'apply'))
+  #   displayName: "terraform apply"
+  # - script: terraform destroy --auto-approve
+  #   condition: and(succeeded(), eq('${{ parameters.tf_operation }}', 'destroy'))
+  #   displayName: "terraform destroy"
+  - script: knife node list
+    displayName: "Verify chef configuration"
