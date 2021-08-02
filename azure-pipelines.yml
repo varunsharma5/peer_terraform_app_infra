@@ -55,6 +55,7 @@ jobs:
   - script: chef -v
     displayName: 'Verify chef workstation installation'
 
+  # Configuring chef workstation
   - script: cp $(node_pem_file.secureFilePath) ~/.
     displayName: "Copy node pem key to home dir"
   - script: |
@@ -68,11 +69,13 @@ jobs:
   - script: knife node list
     displayName: "Verify chef configuration"
 
+  # Configuring AWS
   - script: |
       mkdir ~/.aws
       cp $(aws_credentials_file.secureFilePath) ~/.aws
     displayName: "Configure AWS"
 
+  # Terraform operations
   - script: terraform init
     displayName: "terraform init"
   - script: terraform validate
