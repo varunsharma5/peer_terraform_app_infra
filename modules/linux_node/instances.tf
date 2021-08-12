@@ -8,14 +8,14 @@ resource "aws_instance" "my_vm" {
   tags = var.tags
 
   provisioner "local-exec" {
-    command = "sleep 90; knife bootstrap ${self.public_ip} -U centos -i ~/varun-chef-key.pem --sudo -N ${self.public_ip} --policy-name ${var.chef_policy_name} --policy-group staging -c ~/.chef/config.rb --ssh-verify-host-key=never --chef-license accept"
+    command = "sleep 90; knife bootstrap ${self.public_ip} -U ${var.ssh_user_name} -i ~/varun-chef-key.pem --sudo -N ${self.public_ip} --policy-name ${var.chef_policy_name} --policy-group staging -c ~/.chef/config.rb --ssh-verify-host-key=never --chef-license accept"
   }
 
   provisioner "remote-exec" {
     connection {
       host = self.public_ip
       type = "ssh"
-      user = "centos"
+      user = var.ssh_user_name
       agent = false
       private_key = file("~/varun-chef-key.pem")
     }

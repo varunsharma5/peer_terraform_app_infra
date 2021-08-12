@@ -6,3 +6,4 @@ variable "vpc_security_group_ids" {}
 variable "key_name" {}
 variable "instance_count" {}
 variable "chef_policy_name" {}
+variable "ssh_user_name" {}

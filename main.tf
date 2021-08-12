@@ -7,16 +7,23 @@ data "terraform_remote_state" "network_details" {
   } 
 }
 
+resource "random_string" "random" {
+  length           = 5
+  special          = true
+  override_special = "-"
+}
+
 module "webserver" {
   source = "./modules/linux_node"
   instance_count = var.instance_count_webserver
-  ami = var.instance_ami
+  ami = var.web_instance_ami
   instance_type = "t3.micro"
   key_name = data.terraform_remote_state.network_details.outputs.ssh_key_pair
   subnet_id = data.terraform_remote_state.network_details.outputs.public_subnet
   vpc_security_group_ids = data.terraform_remote_state.network_details.outputs.webserver_security_group_id_array
+  ssh_user_name = "centos"
   tags = {
-    Name = var.webserver_prefix
+    Name = "${var.webserver_prefix}-${random_string.random.result}"
     "X-Contact" = "varun.sharma@progress.com"
     "X-Dept" = "PS"
     "X-Production" = "No"
@@ -26,20 +33,26 @@ module "webserver" {
   chef_policy_name = "tomcat"
 }
 
-# module "loadbalancer" {
-#   source = "./modules/linux_node"
-#   instance_count = var.instance_count_loadbalancer
-#   ami = var.instance_ami
-#   instance_type = "t3.micro"
-#   key_name = data.terraform_remote_state.network_details.outputs.ssh_key_pair
-#   subnet_id = data.terraform_remote_state.network_details.outputs.my_subnet
-#   vpc_security_group_ids = data.terraform_remote_state.network_details.outputs.security_group_id_array
-#   tags = {
-#     Name = var.loadbalancer_prefix
-#   }
-#   chef_policy_name = "haproxy_loadbalancer"
-#   depends_on = [module.webserver,module.web_docker_host]
-# }
+module "loadbalancer" {
+  source = "./modules/linux_node"
+  instance_count = var.instance_count_loadbalancer
+  ami = var.lb_instance_ami
+  instance_type = "t3.micro"
+  key_name = data.terraform_remote_state.network_details.outputs.ssh_key_pair
+  subnet_id = data.terraform_remote_state.network_details.outputs.public_subnet
+  vpc_security_group_ids = data.terraform_remote_state.network_details.outputs.webserver_security_group_id_array
+  ssh_user_name = "ubuntu"
+  tags = {
+    Name = "${var.loadbalancer_prefix}-${random_string.random.result}"
+    "X-Contact" = "varun.sharma@progress.com"
+    "X-Dept" = "PS"
+    "X-Production" = "No"
+    "X-TTL" = "15"
+    "X-Do-NOT-REMOVE" = "Yes"
+  }
+  chef_policy_name = "haproxy_lb"
+  depends_on = [module.webserver]
+}
 
 # module "web_docker_host" {
 #   source = "./modules/linux_node"
