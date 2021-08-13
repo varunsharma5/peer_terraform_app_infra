@@ -2,9 +2,12 @@ variable "region" {
   default = "ap-south-1"
 }
 variable "instance_count_webserver" {
-  default = "1"
+  default = "0"
 }
 variable "instance_count_loadbalancer" {
+  default = "0"
+}
+variable "instance_count_mysqlserver" {
   default = "1"
 }
 variable "web_instance_ami" {
@@ -18,4 +21,7 @@ variable "webserver_prefix" {
 }
 variable "loadbalancer_prefix" {
   default = "peer.review.02-loadbalancer-vm"
+}
+variable "mysqlserver_prefix" {
+  default = "peer.review.02-mysqlserver-vm"
 }
