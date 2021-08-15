@@ -2,10 +2,10 @@ variable "region" {
   default = "ap-south-1"
 }
 variable "instance_count_webserver" {
-  default = "0"
+  default = "1"
 }
 variable "instance_count_loadbalancer" {
-  default = "0"
+  default = "1"
 }
 variable "instance_count_mysqlserver" {
   default = "1"
