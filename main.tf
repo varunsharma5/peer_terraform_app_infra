@@ -29,6 +29,7 @@ module "webserver" {
     "X-Production" = "No"
     "X-TTL" = "15"
     "X-Do-NOT-REMOVE" = "Yes"
+    "Tier" = "web"
   }
   chef_policy_name = "tomcat"
 }
@@ -49,6 +50,7 @@ module "loadbalancer" {
     "X-Production" = "No"
     "X-TTL" = "15"
     "X-Do-NOT-REMOVE" = "Yes"
+    "Tier" = "lb"
   }
   chef_policy_name = "haproxy_lb"
   depends_on = [module.webserver]
@@ -70,6 +72,7 @@ module "mysqlserver" {
     "X-Production" = "No"
     "X-TTL" = "15"
     "X-Do-NOT-REMOVE" = "Yes"
+    "Tier" = "database"
   }
   chef_policy_name = "mysql_config"
 }
