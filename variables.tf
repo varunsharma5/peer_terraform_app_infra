@@ -8,7 +8,7 @@ variable "instance_count_loadbalancer" {
   default = "1"
 }
 variable "instance_count_mysqlserver" {
-  default = "0"
+  default = "1"
 }
 variable "web_instance_ami" {
   default = "ami-0b1fd547bf5aae708" # x86_64 CentOS_7
