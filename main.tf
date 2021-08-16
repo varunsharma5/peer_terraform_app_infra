@@ -72,5 +72,14 @@ module "mysqlserver" {
     "X-Do-NOT-REMOVE" = "Yes"
   }
   chef_policy_name = "mysql_config"
-  # depends_on = [module.webserver]
+}
+
+resource "aws_route53_record" "dns_record" {
+  zone_id = var.host_zone_id
+  name    = var.route53_a_record_name
+  type    = "A"
+  ttl     = "300"
+  records = [module.loadbalancer.public_ip.0]
+
+  depends_on = [module.loadbalancer]
 }

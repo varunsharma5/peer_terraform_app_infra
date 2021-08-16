@@ -8,7 +8,7 @@ variable "instance_count_loadbalancer" {
   default = "1"
 }
 variable "instance_count_mysqlserver" {
-  default = "1"
+  default = "0"
 }
 variable "web_instance_ami" {
   default = "ami-0b1fd547bf5aae708" # x86_64 CentOS_7
@@ -24,4 +24,10 @@ variable "loadbalancer_prefix" {
 }
 variable "mysqlserver_prefix" {
   default = "peer.review.02-mysqlserver-vm"
+}
+variable "host_zone_id" {
+  default = "Z085947422RTR2LQUT9Q"
+}
+variable "route53_a_record_name" {
+  default = "webserver.varun.chefsuccess.io"
 }
